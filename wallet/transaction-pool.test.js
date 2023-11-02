@@ -1,25 +1,17 @@
-const TransactionPool = require('./transaction-pool');
-const Transaction = require('./transaction');
-const Wallet = require('./index');
+class TransactionPool {
+  constructor() {
+    this.transactionMap = {};
+  }
 
-describe('TransactionPool', () => {
-  let transactionPool, transaction;
+  setTransaction(transaction) {
+    this.transactionMap[transaction.id] = transaction;
+  }
 
-  beforeEach(() => {
-    transactionPool = new TransactionPool();
-    transaction = new Transaction({
-      senderWallet: new Wallet(),
-      recipient: 'fake-recipient',
-      amount: 50
-    });
-  });
+  existingTransaction({ inputAddress }) {
+    const transactions = Object.values(this.transactionMap);
 
-  describe('setTransaction()', () => {
-    it('adds a transaction', () => {
-      transactionPool.setTransaction(transaction);
+    return transactions.find(transaction => transaction.input.address === inputAddress);
+  }
+}
 
-      expect(transactionPool.transactionMap[transaction.id])
-        .toBe(transaction);
-    });
-  });
-});
+module.exports = TransactionPool;
